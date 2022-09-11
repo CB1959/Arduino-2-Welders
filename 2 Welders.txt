@@ -1,0 +1,173 @@
+// Program by Chris Brenner April 2020
+// For 2 LEDs to simulate welding
+// constants to set pin numbers
+const int Weld1LedPin =  11; // the number of the Weld1 LED pin
+const int Weld2LedPin =  12; // the number of the Weld2 LED pin
+
+// Variables will change
+int Weld1LedState = HIGH; //ledState for Weld1 LED
+int Weld1LedCycleState = 1;
+int Weld2LedState = HIGH; //ledState for Weld2 LED
+int Weld2LedCycleState = 1;
+
+long previousMillisWeld1On = 0;  //last time Weld1 LED was updated
+long previousMillisWeld1Off = 0; 
+long previousMillisWeld1LedCycleOn = 0;
+long previousMillisWeld1LedCycleOff = 0;
+long previousMillisWeld2On = 0;  //last time Weld2 LED was updated
+long previousMillisWeld2Off = 0; 
+long previousMillisWeld2LedCycleOn = 0;
+long previousMillisWeld2LedCycleOff = 0;
+// must be long to prevent overflow
+long Weld1LedIntervalOn = 60; //interval to blink Weld1 LED (milliseconds)
+long Weld1LedIntervalOff = 500; //interval to blink Weld1 LED (milliseconds)
+long Weld1LedCycleIntervalOff = 10000;
+long Weld1LedCycleIntervalOn = 9000;
+long Weld2LedIntervalOn = 60; //interval to blink Weld2 LED (milliseconds)
+long Weld2LedIntervalOff = 500; //interval to blink Weld2 LED (milliseconds)
+long Weld2LedCycleIntervalOff = 10000;
+long Weld2LedCycleIntervalOn = 9000;
+unsigned long currentMillis = 0;
+
+void setup() {
+  // set the pins to output mode
+  pinMode(Weld1LedPin, OUTPUT);
+   pinMode(Weld2LedPin, OUTPUT);
+  
+  digitalWrite(Weld1LedPin, Weld1LedState);
+  digitalWrite(Weld2LedPin, Weld2LedState);
+  currentMillis = millis();
+}
+
+void loop()
+{
+  // capture the current time
+  currentMillis = millis();
+  manageWeld1LedOn();
+  manageWeld1LedOff();
+  manageWeld1LedCycleOff();
+  manageWeld1LedCycleOn();
+  manageWeld2LedOn();
+  manageWeld2LedOff();
+  manageWeld2LedCycleOff();
+  manageWeld2LedCycleOn();
+}
+
+void manageWeld1LedCycleOn()
+
+{
+  
+  
+  //check if it's time to change the Weld1 LED yet 
+  if(Weld1LedCycleState == 1 &&(currentMillis - previousMillisWeld1LedCycleOn > Weld1LedCycleIntervalOn)) {
+    //store the time of this change
+    previousMillisWeld1LedCycleOff = currentMillis;
+    digitalWrite(Weld1LedPin, LOW);
+    Weld1LedCycleState = (Weld1LedCycleState == 1) ? 0 : 1;
+    Weld1LedCycleIntervalOff = (random(2000, 10000));
+    
+  }
+}
+
+void manageWeld1LedCycleOff()
+
+{
+  
+  
+  //check if it's time to change the Weld1 LED yet 
+  if(Weld1LedCycleState == 0 && (currentMillis - previousMillisWeld1LedCycleOff > Weld1LedCycleIntervalOff)) {
+    //store the time of this change
+    previousMillisWeld1LedCycleOn = currentMillis;
+    digitalWrite(Weld1LedPin, LOW);
+    Weld1LedCycleState = (Weld1LedCycleState == 0) ? 1 : 0;
+    Weld1LedCycleIntervalOn = (random(2000, 10000));
+    
+  }
+}
+
+void manageWeld1LedOn()
+
+{
+  
+  
+  //check if it's time to change the Weld1 LED yet 
+  if (digitalRead(Weld1LedPin) == HIGH && Weld1LedCycleState > 0 && Weld1LedCycleState < 2 &&(currentMillis - previousMillisWeld1On > Weld1LedIntervalOn)) {
+    //store the time of this change
+    previousMillisWeld1Off = currentMillis;
+    Weld1LedState = (Weld1LedState == HIGH) ? LOW : HIGH;
+    digitalWrite(Weld1LedPin, Weld1LedState);
+    Weld1LedIntervalOff = (random(100));
+    
+  }
+}
+void manageWeld1LedOff()
+
+{
+  if (digitalRead(Weld1LedPin) == LOW && Weld1LedCycleState > 0 && Weld1LedCycleState < 2 &&(currentMillis - previousMillisWeld1Off > Weld1LedIntervalOff)) {
+    //store the time of this change
+    previousMillisWeld1On = currentMillis;
+    Weld1LedState = (Weld1LedState == LOW) ? HIGH : LOW;
+    digitalWrite(Weld1LedPin, Weld1LedState);
+    Weld1LedIntervalOn = (random(60));
+    
+  }
+}
+  void manageWeld2LedCycleOn()
+
+{
+  
+  
+  //check if it's time to change the Weld2 LED yet 
+  if(Weld2LedCycleState == 1 &&(currentMillis - previousMillisWeld2LedCycleOn > Weld2LedCycleIntervalOn)) {
+    //store the time of this change
+    previousMillisWeld2LedCycleOff = currentMillis;
+    digitalWrite(Weld2LedPin, LOW);
+    Weld2LedCycleState = (Weld2LedCycleState == 1) ? 0 : 1;
+    Weld2LedCycleIntervalOff = (random(800, 10000));
+    
+  }
+}
+
+void manageWeld2LedCycleOff()
+
+{
+  
+  
+  //check if it's time to change the Weld2 LED yet 
+  if(Weld2LedCycleState == 0 && (currentMillis - previousMillisWeld2LedCycleOff > Weld2LedCycleIntervalOff)) {
+    //store the time of this change
+    previousMillisWeld2LedCycleOn = currentMillis;
+    digitalWrite(Weld2LedPin, LOW);
+    Weld2LedCycleState = (Weld2LedCycleState == 0) ? 1 : 0;
+    Weld2LedCycleIntervalOn = (random(2000, 10000));
+    
+  }
+}
+
+void manageWeld2LedOn()
+
+{
+  
+  
+  //check if it's time to change the Weld2 LED yet 
+  if (digitalRead(Weld2LedPin) == HIGH && Weld2LedCycleState > 0 && Weld2LedCycleState < 2 &&(currentMillis - previousMillisWeld2On > Weld2LedIntervalOn)) {
+    //store the time of this change
+    previousMillisWeld2Off = currentMillis;
+    Weld2LedState = (Weld2LedState == HIGH) ? LOW : HIGH;
+    digitalWrite(Weld2LedPin, Weld2LedState);
+    Weld2LedIntervalOff = (random(100));
+    
+  }
+}
+void manageWeld2LedOff()
+
+{
+  if (digitalRead(Weld2LedPin) == LOW && Weld2LedCycleState > 0 && Weld2LedCycleState < 2 &&(currentMillis - previousMillisWeld2Off > Weld2LedIntervalOff)) {
+    //store the time of this change
+    previousMillisWeld2On = currentMillis;
+    Weld2LedState = (Weld2LedState == LOW) ? HIGH : LOW;
+    digitalWrite(Weld2LedPin, Weld2LedState);
+    Weld2LedIntervalOn = (random(60));
+    
+  }
+ }
